@@ -6,7 +6,7 @@
     - [Installation](#installation)
     - [Conda environment](#conda-environment)
 - [VHR-ALL](#vhr-all)
-- [Pan-leukemia](#pan-leukemia)
+- [Pan-Leukemia](#pan-leukemia)
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
 
