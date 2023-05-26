@@ -28,5 +28,5 @@ bash create_single-cell_lineage_conda_environment.sh
 
 # VHR-ALL
 
-# Pan-leukemia
+# Pan-Leukemia
 
