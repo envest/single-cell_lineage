@@ -1,12 +1,12 @@
 name: single-cell_lineage
 channels:
+  - conda-forge
   - bioconda
 dependencies:
-  - python=3.11.3
-  - r-base=4.3.*
-  - r-renv
-  - bioconda::pysam=0.21.0
-  - bioconda::pyvcf=0.6.8.dev0
-  - bioconda::samtools=1.17
-  - bioconda::bcftools=1.17
+  - r-base
+  - r-tidyverse
+  - pysam
+  - pyvcf
+  - samtools
+  - bcftools
 
