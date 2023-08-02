@@ -5,7 +5,7 @@
 #
 # Usage: download_sort_index_vcf.sh --url [url] --output [path/to/sample.vcf.gz] --overwrite
 # where --url (or -u) is the file's remote URL (required)
-#       --output (or -o) is the path to the output file ending in vcf.gz (required)
+#       --output (or -o) is the path to the output file ending in .vcf.gz (required)
 #       --overwrite (or -w) overwrites existing output files (optional)
 
 #!/bin/bash
