@@ -1,110 +1,82 @@
-# Download VCF files from Mission Bio website
-# Sort and index BCFs
-# Select SNPs and targeted variants
+# Download a VCF file from URL, then sort and index as BCF
 #
 # Steven Foltz
 # 2023
 #
-# Usage: download_mb_vcf_files.sh --links_file mb_vcf_download_links.tsv --snps_file SNPs.tsv --targets_file targets.tsv --n_cells_file vcf_n_cells.tsv
-# where --links_file is a TSV file with patient, stage, mrd_pool, mb_filename, and mb_link columns
-#       --snps_file is a single column input file (no header) of SNP positions (chr:pos)
-#       --targets_file is a single column input file (no header) of target positions (chr:pos)
-#       --n_cells_file is an output file tracking the number of cells associated with each sample
-#	--fasta reference file
+# Usage: download_sort_index_mb_vcf.sh --url [url] --output [path/to/sample.vcf.gz] --overwrite
+# where --url (or -u) is the file's remote URL (required)
+#       --output (or -o) is the path to the output file ending in vcf.gz (required)
+#       --overwrite (or -w) overwrites existing output files (optional)
 
 #!/bin/bash
 set -euo pipefail
 
-# set directory paths
-raw_dir="VCF_raw"
-sorted_dir="BCF_sorted"
-snps_dir="BCF_SNPs"
-targets_dir="BCF_targets"
+# set parameter defaults
+overwrite="false"
 
-mkdir -p ${raw_dir} ${sorted_dir} ${snps_dir} ${targets_dir}
+# read command line parameters
+while [ $# -gt 0 ] ; do
 
-# set default input file paths
-links_file="mb_vcf_download_links.tsv"
-snps_file="SNPs.tsv"
-targets_file="targets.tsv"
-fasta="/mnt/isilon/tan_lab/foltzs/reference/genome/hg19.fa"
+	case $1 in
+	
+		--url | -u)
+			url="$2"
+			shift
+			shift
+			;;
 
-# set default output file paths
-n_cells_file="vcf_n_cells.tsv"
+	  	--output | -o)
+			output="$2"
+			shift
+			shift
+			;;
 
-# allow for alternative input file paths
-while [ $# -gt 0 ]; do
-    if [[ $1 == *'--'* ]]; then
-        v="${1/--/}"
-        declare $v="$2"
-    fi
-    shift
+		--overwrite | -w)
+			overwrite="true"
+			shift
+			;;
+
+		*)
+			echo $1 does not match any input option.
+			exit 1
+			;;
+
+  	esac
+
 done
 
-if [[ ! -f ${links_file} ]]; then
+# set directory paths
+output_dir=$(dirname ${output})
+sorted_dir="sorted_BCFs"
 
-  echo Input links_file ${links_file} does not exist.
-  exit 1
+# create sorted file name
+sample_basename=$(basename ${output})
+sample_filename_stem=${sample_basename%*.vcf.gz}
+sorted_filename=${sorted_dir}/${sample_filename_stem}.sorted.bcf.gz
+
+# download VCF
+if [[ ! -f ${output} | ${overwrite} = "true" ]]; then
+	
+ 	mkdir -p ${output_dir}	
+	wget -nc -O ${output} "${url}"
+
+else
+
+	echo ${output} already exists and was not overwritten.
 
 fi
 
-echo patient stage mrd_pool n_cells | tr ' ' '\t' > ${n_cells_file}
+# sort and index BCF
+if [[ ! -f ${sorted} | ${overwrite} = "true" ]]; then
 
-n=0
-n_total=$(wc -l ${links_file} | cut -f1 -d' ')
+	mkdir -p ${sorted_dir}	
+	# use --temp-dir ./ because the shared /tmp can be too small for some files
+	bcftools sort --temp-dir ./ --output ${sorted} --output-type b ${output}
+	bcftools index ${sorted}
 
-while read patient stage mrd_pool mb_filename mb_link; do
+else
 
-	n=$((n+1))
-	echo ${n} out of ${n_total}
+	echo ${sorted} already exists and was not overwritten.
 
-	# skip over column name row
-	[[ ${patient} =~ ^patient ]] && continue
-
-	# skip if mb_filename is NA
-	[[ ${mb_filename} =~ NA ]] && continue
-
-	# download VCF from Mission Bio
-	if [[ ! -f ${raw_dir}/${mb_filename} ]]; then
-	       
-		wget -nc -O ${raw_dir}/${mb_filename} "${mb_link}"
-
-	fi
-
-	sample_basename=$(basename ${mb_filename})
-	sample_filename_stem=${sample_basename%*.vcf.gz}
-	sorted_filename=${sample_filename_stem}.sorted.bcf.gz
-	snps_filename=${sample_filename_stem}.SNPs_only.bcf.gz
-	targets_filename=${sample_filename_stem}.targets_only.bcf.gz
-
-	# sort and index VCF --> VCF
-	if [[ ! -f ${sorted_dir}/${sorted_filename} ]]; then
-	
-		echo Sorting and indexing ${sample_filename_stem}
-		bcftools sort --temp-dir ./ --output ${sorted_dir}/${sorted_filename} --output-type b ${raw_dir}/${mb_filename}
-		bcftools index ${sorted_dir}/${sorted_filename}
-
-	fi
-
-	# select SNPs only
-	if [[ ! -f ${snps_dir}/${snps_filename} ]]; then
-
-		bcftools view --output-type b --output ${snps_dir}/${snps_filename} --targets-file SNP_regions.tsv ${sorted_dir}/${sorted_filename}
-		bcftools index ${snps_dir}/${snps_filename}
-
-	fi
-
-	# select targets only
-	if [[ ! -f ${targets_dir}/${targets_filename} ]]; then
-
-		bcftools view --output-type b --output ${targets_dir}/${targets_filename} --targets-file target_regions.tsv ${sorted_dir}/${sorted_filename}
-	        bcftools index ${targets_dir}/${targets_filename}
-
-	fi
-
-	# get n_cells
-	n_cells=$(bcftools view -h ${snps_dir}/${snps_filename} | grep CHROM | cut -f10- | tr '\t' '\n' | wc -l)
-	echo ${patient} ${stage} ${mrd_pool} ${n_cells} | tr ' ' '\t' >> ${n_cells_file}
-
-done < ${links_file}
+fi
 
