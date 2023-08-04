@@ -3,9 +3,9 @@
 # Steven Foltz
 # 2023
 #
-# Usage: download_sort_index_vcf.sh --url [url] --output [path/to/sample.bam] --overwrite
-# where --url is the bam file's remote URL (required)
-#       --output is the path to the output file ending in .bam (required)
+# Usage: download_index_bam.sh --url [url] --output [path/to/sample.bam] --overwrite
+# where --url (or -u) is the bam file's remote URL (required)
+#       --output (or -o) is the path to the output file ending in .bam (required)
 #       --overwrite (or -w) overwrites existing output files (optional)
 
 #!/bin/bash
@@ -19,13 +19,13 @@ while [ $# -gt 0 ] ; do
 
 	case $1 in
 	
-		--url)
+		--url | -u)
 			url="$2"
 			shift
 			shift
 			;;
 
-	  	--output)
+	  	--output | -o)
 			output_filename="$2"
 			shift
 			shift
