@@ -11,7 +11,7 @@ from pysam import VariantFile
 bcf_filename = sys.argv[1]
 output_filename = sys.argv[2]
 
-# check bcf file exists
+# check that bcf file exists
 
 if os.path.isfile(bcf_filename):
 
@@ -22,7 +22,7 @@ else:
 
     sys.exit("BCF file " + bcf_filename + " does not exist.")
 
-#check output file does not exist
+# check that output file does not exist
 
 if os.path.isfile(output_filename):
 
@@ -30,9 +30,11 @@ if os.path.isfile(output_filename):
 
 else:
 
-    column_headers = ["chr", "pos", "ref", "alt1", "alt2", "cell_barcode", "genotype", "quality", "alleles", "ref_depth", "alt1_depth", "alt2_depth", "total_depth"]
     output_file = open(output_filename, 'w')
-    output_file.write("\t".join(column_headers) + "\n")
+
+# write columns of output file
+column_headers = ["chr", "pos", "ref", "alt1", "alt2", "cell_barcode", "genotype", "quality", "alleles", "ref_depth", "alt1_depth", "alt2_depth", "total_depth"]
+output_file.write("\t".join(column_headers) + "\n")
 
 # process each variant record
 
@@ -113,12 +115,9 @@ for record in bcf_in.fetch():
             a2 = ref_alts_list[gt_tup[1]]
 
             # left align ABC/DBC -> A/D
-            if len(a1) == len(ref_allele) and a1[1:] == ref_allele[1:]:
+            if len(a1) == len(a2) and a1[1:] == a2[1:]:
 
                 a1 = a1[0]
-
-            if len(a2) == len(ref_allele) and a2[1:] == ref_allele[1:]:
-
                 a2 = a2[0]
 
             alleles = a1 + "/" + a2
