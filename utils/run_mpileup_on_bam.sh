@@ -3,9 +3,10 @@
 # Steven Foltz
 # 2023
 #
-# Usage: run_mpileup_on_bam.sh --bam [path/to/sample.bam] --coordinates --output [path/to/output.tsv] --overwrite
+# Usage: run_mpileup_on_bam.sh --bam [path/to/sample.bam] --coordinates [path/to/coords.tsv] --output [path/to/output.tsv] --overwrite
 # where --bam (or -b)  is the input bam file (required)
 #       --coordinates (or -c) is a list of genomic coordinates (assembly must match bam) (required)
+#         format: chromosome and position, tab separated, no column names
 #       --output (or -o) is the path to the output tsv file (required)
 #       --overwrite (or -w) overwrites existing output files (optional)
 
@@ -68,5 +69,9 @@ output_dir=$(dirname ${output_filename})
 mkdir -p ${output_dir}
 
 # run mpileup
-samtools mpileup --positions ${coordinates_filename} --output ${output_filename} ${bam_filename}
+while read chr pos; do
+	
+	samtools mpileup --region $chr:$pos-$pos --no-output-ins --no-output-ins --no-output-del --no-output-del --no-output-ends -aa ${bam_filename} 2> /dev/null
+	
+done < ${coordinates_filename} > ${output_filename}
 
