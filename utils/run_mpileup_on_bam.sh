@@ -62,7 +62,7 @@ done
 [[ ! -f $coordinates_filename ]] && echo Coordinates file ${coordinates_filename} does not exist. && exit 1
 
 # select targets only
-[[ -f ${output_filename} && ${overwrite} = "false" ]] && echo Output file ${output_filename} exists and will not be overwritten. && exit 1
+[[ -f ${output_filename} && ${overwrite} = "false" ]] && echo Output file ${output_filename} exists and will not be overwritten. && exit 0
 
 # set up output directory
 output_dir=$(dirname ${output_filename})

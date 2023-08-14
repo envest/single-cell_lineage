@@ -73,7 +73,7 @@ if [[ ! -f ${targets_filename} ]]; then
 fi
 
 # select targets only
-if [[ ! -f ${output_filename} | ${overwrite} = "true" ]]; then
+if [[ ! -f ${output_filename} || ${overwrite} = "true" ]]; then
 
 	mkdir -p ${output_dir}
 	bcftools view --output-type b --output ${output_filename} --targets-file ${targets_filename} ${input_filename}

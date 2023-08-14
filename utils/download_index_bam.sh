@@ -49,7 +49,7 @@ done
 output_dir=$(dirname ${output_filename})
 
 # download bam
-if [[ ! -f ${output_filename} | ${overwrite} = "true" ]]; then
+if [[ ! -f ${output_filename} || ${overwrite} = "true" ]]; then
 	
  	mkdir -p ${output_dir}	
 	wget -nc -O ${output_filename} "${url}"
@@ -61,7 +61,7 @@ else
 fi
 
 # create bam index
-if [[ ! -f ${output_filename}.bai | ${overwrite} = "true" ]]; then
+if [[ ! -f ${output_filename}.bai || ${overwrite} = "true" ]]; then
 
 	samtools index ${output_filename}
 

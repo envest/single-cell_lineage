@@ -38,13 +38,13 @@ while [ $# -gt 0 ] ; do
                         ;;
 
                 --hg19_snp_targets)
-                        snp_targets="$2"
+                        hg19_snp_targets="$2"
                         shift
                         shift
                         ;;
 
 		--hg19_somatic_targets)
-			somatic_targets="$2"
+			hg19_somatic_targets="$2"
 			shift
 			shift
 			;;
@@ -66,39 +66,39 @@ done
 
 while read patient sample mb_url raw_VCF sorted_BCF SNP_BCF somatic_BCF SNP_GT somatic_GT scRNA_bam scRNA_mpileup scATAC_bam scATAC_mpileup; do
 
-	[[ ${patient} =~ "^patient" ]] && continue
+	[[ ${patient} =~ "patient" ]] && continue
 
 	echo ${patient} ${sample}
 
 	if [ ! ${mb_url} = "NA" ]; then
 
-		echo bash ${utils_dir}/download_sort_index_VCF.sh --url ${mb_url} --output ${raw_VCF} --overwrite
+		bash ${utils_dir}/download_sort_index_VCF.sh --url ${mb_url} --vcf_output ${raw_VCF} --sorted_output ${sorted_BCF}
 
 	fi
 
 	if [ ! ${hg19_snp_targets} = "NA" ]; then
 
-                echo bash ${utils_dir}/select_targets_from_BCF.sh --input ${sorted_BCF} --targets ${hg19_snp_targets} --output ${SNP_BCF} --overwrite
-                echo python ${utils_dir}/get_cell_GTs.py ${SNP_BCF} ${SNP_GT}
+                bash ${utils_dir}/select_targets_from_BCF.sh --input ${sorted_BCF} --targets ${hg19_snp_targets} --output ${SNP_BCF}
+                python ${utils_dir}/get_cell_GTs.py ${SNP_BCF} ${SNP_GT}
 
         fi
 
 	if [ ! ${hg19_somatic_targets} = "NA" ]; then
 		
-		echo bash ${utils_dir}/select_targets_from_BCF.sh --input ${sorted_BCF} --targets ${hg19_somatic_targets} --output ${somatic_BCF} --overwrite
-		echo python ${utils_dir}/get_cell_GTs.py ${somatic_BCF} ${somatic_GT}
+		bash ${utils_dir}/select_targets_from_BCF.sh --input ${sorted_BCF} --targets ${hg19_somatic_targets} --output ${somatic_BCF}
+		python ${utils_dir}/get_cell_GTs.py ${somatic_BCF} ${somatic_GT}
 
 	fi
 
-	if [ ! ${GRCh38_somatic_targets} = "NA" && ! ${scRNA_bam} = "NA" ]; then
+	if [[ ! ${GRCh38_somatic_targets} = "NA" && ! ${scRNA_bam} = "NA" ]]; then
 
-		echo bash ${utils_dir}/run_mpileup_on_bam.sh --bam ${scRNA_bam} --coordinates ${GRCh38_somatic_targets} --output ${scRNA_mpileup} --overwrite
+		bash ${utils_dir}/run_mpileup_on_bam.sh --bam ${scRNA_bam} --coordinates ${GRCh38_somatic_targets} --output ${scRNA_mpileup}
 
 	fi
 
-	if [ ! ${GRCh38_somatic_targets} = "NA" && ! ${scATAC_bam} = "NA" ]; then
+	if [[ ! ${GRCh38_somatic_targets} = "NA" && ! ${scATAC_bam} = "NA" ]]; then
 
-		echo bash ${utils_dir}/run_mpileup_on_bam.sh --bam ${scATAC_bam} --coordinates ${GRCh38_somatic_targets} --output ${scATAC_mpileup} --overwrite
+		bash ${utils_dir}/run_mpileup_on_bam.sh --bam ${scATAC_bam} --coordinates ${GRCh38_somatic_targets} --output ${scATAC_mpileup}
 	
 	fi
 	

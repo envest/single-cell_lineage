@@ -3,9 +3,10 @@
 # Steven Foltz
 # 2023
 #
-# Usage: download_sort_index_vcf.sh --url [url] --output [path/to/sample.vcf.gz] --overwrite
+# Usage: download_sort_index_vcf.sh --url [url] --vcf_output [path/to/sample.vcf.gz] --sorted_output [path/to/sorted.bcf.gz] --overwrite
 # where --url (or -u) is the file's remote URL (required)
-#       --output (or -o) is the path to the output file ending in .vcf.gz (required)
+#       --vcf_output is the path to the downloaded VCF output file ending in .vcf.gz (required)
+#       --sorted_output is the path to the sorted BCF output file ending in .bcf.gz (required)
 #       --overwrite (or -w) overwrites existing output files (optional)
 
 #!/bin/bash
@@ -25,8 +26,14 @@ while [ $# -gt 0 ] ; do
 			shift
 			;;
 
-	  	--output | -o)
-			output_filename="$2"
+	  	--vcf_output)
+			vcf_filename="$2"
+			shift
+			shift
+			;;
+
+		--sorted_output)
+			sorted_filename="$2"
 			shift
 			shift
 			;;
@@ -46,32 +53,27 @@ while [ $# -gt 0 ] ; do
 done
 
 # set directory paths
-output_dir=$(dirname ${output_filename})
-sorted_dir="sorted_BCFs"
-
-# create sorted file name
-sample_basename=$(basename ${output_filename})
-sample_filename_stem=${sample_basename%*.vcf.gz}
-sorted_filename=${sorted_dir}/${sample_filename_stem}.sorted.bcf.gz
+output_dir=$(dirname ${vcf_filename})
+sorted_dir=$(dirname ${sorted_filename})
 
 # download VCF
-if [[ ! -f ${output_filename} | ${overwrite} = "true" ]]; then
+if [[ ! -f ${vcf_filename} || ${overwrite} = "true" ]]; then
 	
  	mkdir -p ${output_dir}	
-	wget -nc -O ${output_filename} "${url}"
+	wget -nc -O ${vcf_filename} "${url}"
 
 else
 
-	echo ${output_filename} already exists and was not overwritten.
+	echo ${vcf_filename} already exists and was not overwritten.
 
 fi
 
 # sort and index BCF
-if [[ ! -f ${sorted_filename} | ${overwrite} = "true" ]]; then
+if [[ ! -f ${sorted_filename} || ${overwrite} = "true" ]]; then
 
 	mkdir -p ${sorted_dir}	
 	# use --temp-dir ./ because the shared /tmp can be too small for some files
-	bcftools sort --temp-dir ./ --output ${sorted_filename} --output-type b ${output_filename}
+	bcftools sort --temp-dir ./ --output ${sorted_filename} --output-type b ${vcf_filename}
 	bcftools index ${sorted_filename}
 
 else

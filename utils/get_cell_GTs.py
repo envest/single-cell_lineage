@@ -26,10 +26,13 @@ else:
 
 if os.path.isfile(output_filename):
 
-    sys.exit("GT file " + output_filename + " already exists and was not overwritten.")
+    print("GT file " + output_filename + " already exists and was not overwritten.")
+    sys.exit(0)
 
 else:
 
+    output_dir = os.path.dirname(output_filename)
+    os.makedirs(output_dir, exist_ok = True)
     output_file = open(output_filename, 'w')
 
 # write columns of output file
@@ -44,24 +47,21 @@ for record in bcf_in.fetch():
 
     tot_depth_list = ["NA" if sample['DP'] is None else sample['DP'] for sample in record.samples.values()]
 
+    # set all allele depths to default value NA
+    
+    ref_depth_list = alt1_depth_list = alt2_depth_list = ["NA"]*len(record.samples.values())
+
     if 'AD' in record.samples.values()[0]:
         
         ref_depth_list = [sample['AD'][0] for sample in record.samples.values()]
-        alt1_depth_list = [sample['AD'][1] for sample in record.samples.values()]
-
-        if len(record.alts) > 1:
         
+        if len(record.samples.values()[0]['AD']) >= 2:
+
+            alt1_depth_list = [sample['AD'][1] for sample in record.samples.values()]
+
+        if len(record.samples.values()[0]['AD']) == 3:
+
             alt2_depth_list = [sample['AD'][2] for sample in record.samples.values()]
-
-        else:
-
-            alt2_depth_list = ["NA"]*len(record.samples.values())
-
-    else:
-        
-        ref_depth_list = ["NA"]*len(record.samples.values())
-        alt1_depth_list = ["NA"]*len(record.samples.values())
-        alt2_depth_list = ["NA"]*len(record.samples.values())
 
     if 'GQ' in record.samples.values()[0]:
 
