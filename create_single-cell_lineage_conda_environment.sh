@@ -2,5 +2,5 @@
 
 env_name="single-cell_lineage"
 
-conda env create -f environment.yml
+mamba env create -f environment.yml || conda env create -f environment.yml
 
