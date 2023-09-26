@@ -5,8 +5,18 @@ channels:
 dependencies:
   - r-base
   - r-tidyverse
+  - r-here
+  - r-ggrepel
+  - r-reshape2
+  - r-ggtern
+  - bioconductor-rtracklayer
+  - loompy
+  - numpy
+  - pandas
+  - varcode
+  - pyensembl
   - pysam
   - pyvcf
   - samtools
   - bcftools
-
+  - graphviz
