@@ -5,8 +5,6 @@
 - [Lineage tracing from single-cell DNA mutations](#lineage-tracing-from-single-cell-dna-mutations)
     - [Installation](#installation)
     - [Conda environment](#conda-environment)
-- [Pan-Leukemia](#pan-leukemia)
-- [Sarcoma](#sarcoma)
 - [VHR-ALL](#vhr-all)
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
@@ -25,7 +23,7 @@ git clone https://github.com/envest/single-cell_lineage
 To create and activate the `single-cell_lineage` conda environment, run
 
 ```
-bash create_single-cell_lineage_conda_environment.sh
+bash envs/create_single-cell_lineage_conda_environment.sh
 ```
 
 To activate the environment, run
@@ -34,8 +32,6 @@ To activate the environment, run
 conda activate single-cell_lineage
 ```
 
-# Pan-Leukemia
-
-# Sarcoma
+P.S. try out [mamba](https://mamba.readthedocs.io/en/latest/)!
 
 # VHR-ALL
