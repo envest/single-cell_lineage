@@ -20,3 +20,4 @@ dependencies:
   - samtools
   - bcftools
   - graphviz
+  - mp3treesim
