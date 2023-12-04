@@ -1,0 +1,24 @@
+name: epianeufinder
+channels:
+  - conda-forge
+  - bioconda
+dependencies:
+  - r-base
+  - r-essentials
+  - r-tidyverse
+  - r-optparse
+  - r-devtools
+  - r-biocmanager
+  - r-ggdendro
+  - bioconductor-genomicalignments
+  - bioconductor-summarizedexperiment
+  - bioconductor-plyranges
+  - bioconductor-rsamtools
+  - bioconductor-genomeinfodb
+  - bioconductor-bsgenome.hsapiens.ucsc.hg38
+  - bioconductor-genomicranges
+  - bioconductor-biostrings
+  - bioconductor-biocgenerics
+  - bioconductor-s4vectors
+  - bioconductor-genomicfeatures
+
