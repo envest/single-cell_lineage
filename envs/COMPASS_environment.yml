@@ -1,4 +1,4 @@
-name: single-cell_lineage
+name: compass
 channels:
   - conda-forge
   - bioconda
