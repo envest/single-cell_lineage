@@ -5,7 +5,6 @@
 - [Lineage tracing from single-cell DNA mutations](#lineage-tracing-from-single-cell-dna-mutations)
     - [Installation](#installation)
     - [Conda environment](#conda-environment)
-- [VHR-ALL](#vhr-all)
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
 
@@ -34,4 +33,3 @@ conda activate single-cell_lineage
 
 P.S. try out [mamba](https://mamba.readthedocs.io/en/latest/)!
 
-# VHR-ALL
