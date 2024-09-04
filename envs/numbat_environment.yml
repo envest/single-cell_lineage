@@ -1,0 +1,15 @@
+name: numbat
+channels:
+  - conda-forge
+  - bioconda
+dependencies:
+  - cellsnp-lite
+  - samtools
+  - r-base
+  - r-tidyverse
+  - r-optparse
+  - r-biocmanager
+  - bioconductor-genomicranges
+  - bioconductor-iranges
+  - bioconductor-graph
+  - bioconductor-rsamtools
